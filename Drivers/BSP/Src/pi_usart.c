@@ -22,6 +22,7 @@ void pi_usart_init(const uint32_t baudrate) {
     usart_interrupt_enable(USART0, USART_INT_RBNE);
     usart_interrupt_enable(USART0, USART_INT_IDLE);
     nvic_irq_enable(USART0_IRQn, 0, 0);
+    setvbuf(stdout, NULL, _IONBF, 0);
 }
 
 void USART0_IRQHandler(void) {

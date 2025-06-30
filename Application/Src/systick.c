@@ -36,6 +36,7 @@ OF SUCH DAMAGE.
 #include "systick.h"
 
 volatile static uint32_t delay;
+volatile static uint32_t time_tick;
 
 /*!
     \brief      configure systick
@@ -80,4 +81,20 @@ void delay_decrement(void)
     if (0U != delay){
         delay--;
     }
+}
+
+uint32_t get_time_tick(void) {
+    return time_tick;
+}
+
+/*!
+    \brief      this function handles SysTick exception
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void SysTick_Handler(void)
+{
+    time_tick++;
+    delay_decrement();
 }

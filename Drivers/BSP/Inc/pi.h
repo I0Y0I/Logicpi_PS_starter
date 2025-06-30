@@ -7,5 +7,6 @@
 
 #include "pi_led.h"
 #include "pi_usart.h"
+#include "pi_button.h"
 
 #endif //PI_H

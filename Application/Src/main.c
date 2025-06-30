@@ -38,32 +38,6 @@ OF SUCH DAMAGE.
 #include "main.h"
 #include "pi.h"
 
-uint8_t input[64] = {0};
-
-/*!
-    \brief      toggle the led every 500ms
-    \param[in]  none
-    \param[out] none
-    \retval     none
-*/
-void led_spark(void)
-{
-    static __IO uint32_t timingdelaylocal = 0U;
-
-    if(timingdelaylocal){
-
-        if(timingdelaylocal < 500U){
-            pi_led_set(PI_LED_CYAN);
-        }else{
-            pi_led_set(PI_LED_MAGENTA);
-        }
-
-        timingdelaylocal--;
-    }else{
-        timingdelaylocal = 1000U;
-    }
-}
-
 /*!
     \brief      main function
     \param[in]  none
@@ -82,6 +56,7 @@ int main(void)
     /* initialize the LEDs, USART and key */
     pi_led_init();
     pi_usart_init(115200);
+    pi_button_init();
     
     /* print out the clock frequency of system, AHB, APB1 and APB2 */
     printf("\r\nCK_SYS is %d", rcu_clock_freq_get(CK_SYS));
@@ -96,8 +71,27 @@ int main(void)
 #endif /* __FIRMWARE_VERSION_DEFINE */
 
     while (1){
-        printf("\r\nInput Something:");
-        scanf("%s", input);
-        printf("\r\nEcho: %s", input);
+        switch (pi_button_get_event()) {
+            case PI_BUTTON_SINGLE_PRESS:
+                pi_led_set(PI_LED_RED);
+                printf("\r\nShort press!");
+                delay_1ms(1000);
+                pi_led_set(PI_LED_OFF);
+                break;
+            case PI_BUTTON_DOUBLE_PRESS:
+                pi_led_set(PI_LED_GREEN);
+                printf("\r\nDouble press!");
+                delay_1ms(1000);
+                pi_led_set(PI_LED_OFF);
+                break;
+            case PI_BUTTON_LONG_PRESS:
+                pi_led_set(PI_LED_BLUE);
+                printf("\r\nLong press!");
+                delay_1ms(1000);
+                pi_led_set(PI_LED_OFF);
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -23,11 +23,11 @@ add_compile_options($<$<COMPILE_LANGUAGE:ASM>:-x$<SEMICOLON>assembler-with-cpp>)
 
 add_compile_options(-Og -g)
 
-include_directories("Application/Inc" "Drivers/CMSIS" "Drivers/CMSIS/GD/GD32F30x/Include" "Drivers/GD32F30x_standard_peripheral/Include" "Drivers/DSP/Inc")
+include_directories("Application/Inc" "Drivers/CMSIS" "Drivers/CMSIS/GD/GD32F30x/Include" "Drivers/GD32F30x_standard_peripheral/Include" "Drivers/BSP/Inc")
 
 add_definitions(-DDEBUG -DGD32F3 -DGD32F30x -DGD32F303 -DGD32F30X_HD)
 
-file(GLOB_RECURSE SOURCES "Application/Src/*.*" "Drivers/CMSIS/GD/GD32F30x/Source/*.*" "Drivers/CMSIS/GD/GD32F30x/Source/GCC/*.*" "Drivers/GD32F30x_standard_peripheral/Source/*.*" "Drivers/DSP/Src/*.*")
+file(GLOB_RECURSE SOURCES "Application/Src/*.*" "Drivers/CMSIS/GD/GD32F30x/Source/*.*" "Drivers/CMSIS/GD/GD32F30x/Source/GCC/*.*" "Drivers/GD32F30x_standard_peripheral/Source/*.*" "Drivers/BSP/Src/*.*")
 
 set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/Project/gd32f303cbt6.lds")
 
