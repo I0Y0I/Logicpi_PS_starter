@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Drivers/BSP/Inc/font.h" charset="GB18030" />
+    <file url="file://$PROJECT_DIR$/Drivers/BSP/Inc/lcd_init.h" charset="GB18030" />
+    <file url="file://$PROJECT_DIR$/Drivers/BSP/Src/lcd.c" charset="GB18030" />
+    <file url="file://$PROJECT_DIR$/Drivers/BSP/Src/lcd_init.c" charset="GB18030" />
+  </component>
+</project>

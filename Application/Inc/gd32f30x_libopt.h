@@ -52,7 +52,7 @@ OF SUCH DAMAGE.
 // #include "gd32f30x_bkp.h"
 // #include "gd32f30x_rtc.h"
 // #include "gd32f30x_sdio.h"
-// #include "gd32f30x_spi.h"
+#include "gd32f30x_spi.h"
 #include "gd32f30x_timer.h"
 #include "gd32f30x_usart.h"
 // #include "gd32f30x_wwdgt.h"

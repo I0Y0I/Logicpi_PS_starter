@@ -57,7 +57,7 @@ int main(void)
     pi_led_init();
     pi_usart_init(115200);
     pi_button_init();
-    
+
     /* print out the clock frequency of system, AHB, APB1 and APB2 */
     printf("\r\nCK_SYS is %d", rcu_clock_freq_get(CK_SYS));
     printf("\r\nCK_AHB is %d", rcu_clock_freq_get(CK_AHB));
@@ -70,28 +70,34 @@ int main(void)
     printf("\r\nGD32F30x series firmware version: V%d.%d.%d", (uint8_t)(fw_ver >> 24), (uint8_t)(fw_ver >> 16), (uint8_t)(fw_ver >> 8));
 #endif /* __FIRMWARE_VERSION_DEFINE */
 
+    PI_LCD_BLK_RESET();
+    pi_lcd_init();
+    pi_lcd_fill_area(0, 0, 320, 240, MOCHA_BASE);
+    PI_LCD_BLK_SET();
+
     while (1){
-        switch (pi_button_get_event()) {
-            case PI_BUTTON_SINGLE_PRESS:
-                pi_led_set(PI_LED_RED);
-                printf("\r\nShort press!");
-                delay_1ms(1000);
-                pi_led_set(PI_LED_OFF);
-                break;
-            case PI_BUTTON_DOUBLE_PRESS:
-                pi_led_set(PI_LED_GREEN);
-                printf("\r\nDouble press!");
-                delay_1ms(1000);
-                pi_led_set(PI_LED_OFF);
-                break;
-            case PI_BUTTON_LONG_PRESS:
-                pi_led_set(PI_LED_BLUE);
-                printf("\r\nLong press!");
-                delay_1ms(1000);
-                pi_led_set(PI_LED_OFF);
-                break;
-            default:
-                break;
-        }
+        pi_lcd_draw_line(100, 100, 200, 100, MOCHA_TEAL);
+        // switch (pi_button_get_event()) {
+        //     case PI_BUTTON_SINGLE_PRESS:
+        //         pi_led_set(PI_LED_RED);
+        //         printf("\r\nShort press!");
+        //         delay_1ms(1000);
+        //         pi_led_set(PI_LED_OFF);
+        //         break;
+        //     case PI_BUTTON_DOUBLE_PRESS:
+        //         pi_led_set(PI_LED_GREEN);
+        //         printf("\r\nDouble press!");
+        //         delay_1ms(1000);
+        //         pi_led_set(PI_LED_OFF);
+        //         break;
+        //     case PI_BUTTON_LONG_PRESS:
+        //         pi_led_set(PI_LED_BLUE);
+        //         printf("\r\nLong press!");
+        //         delay_1ms(1000);
+        //         pi_led_set(PI_LED_OFF);
+        //         break;
+        //     default:
+        //         break;
+        // }
     }
 }
