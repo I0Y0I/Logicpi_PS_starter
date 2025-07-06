@@ -72,36 +72,41 @@ int main(void)
 
     PI_LCD_BLK_RESET();
     pi_lcd_init();
-    pi_lcd_fill(MOCHA_CRUST);
-    pi_lcd_fill_rectangle(0, 0, PI_LCD_WIDTH>>1, PI_LCD_HEIGHT>>1, MOCHA_SURFACE0);
-    pi_lcd_draw_line(80, 0, 80, 120, MOCHA_BLUE);
-    pi_lcd_draw_rectangle(20, 20, 140, 100, MOCHA_ROSEWATER);
-    pi_lcd_draw_circle(80, 60, 10, MOCHA_PINK);
+    pi_lcd_fill(MOCHA_BASE);
+    // pi_lcd_fill_rectangle(0, 0, PI_LCD_WIDTH>>1, PI_LCD_HEIGHT>>1, MOCHA_SURFACE0);
+    // pi_lcd_draw_line(80, 0, 80, 120, MOCHA_BLUE);
+    // pi_lcd_draw_rectangle(20, 20, 140, 100, MOCHA_ROSEWATER);
+    // pi_lcd_draw_circle(80, 60, 10, MOCHA_PINK);
     PI_LCD_BLK_SET();
 
     while (1){
-        // pi_lcd_draw_line(100, 100, 200, 100, MOCHA_TEAL);
-        // switch (pi_button_get_event()) {
-        //     case PI_BUTTON_SINGLE_PRESS:
-        //         pi_led_set(PI_LED_RED);
-        //         printf("\r\nShort press!");
-        //         delay_1ms(1000);
-        //         pi_led_set(PI_LED_OFF);
-        //         break;
-        //     case PI_BUTTON_DOUBLE_PRESS:
-        //         pi_led_set(PI_LED_GREEN);
-        //         printf("\r\nDouble press!");
-        //         delay_1ms(1000);
-        //         pi_led_set(PI_LED_OFF);
-        //         break;
-        //     case PI_BUTTON_LONG_PRESS:
-        //         pi_led_set(PI_LED_BLUE);
-        //         printf("\r\nLong press!");
-        //         delay_1ms(1000);
-        //         pi_led_set(PI_LED_OFF);
-        //         break;
-        //     default:
-        //         break;
-        // }
+        switch (pi_button_get_event()) {
+            case PI_BUTTON_SINGLE_PRESS:
+                pi_led_set(PI_LED_RED);
+                pi_lcd_print_string(64, 104, "Short  Press", MOCHA_RED, MOCHA_SURFACE0, FONT_LARGE);
+                printf("\r\nShort press!");
+                delay_1ms(1000);
+                pi_lcd_fill_rectangle(64, 104, 256, 136, MOCHA_BASE);
+                pi_led_set(PI_LED_OFF);
+                break;
+            case PI_BUTTON_DOUBLE_PRESS:
+                pi_led_set(PI_LED_GREEN);
+                pi_lcd_print_string(64, 104, "Double Press", MOCHA_GREEN, MOCHA_SURFACE0, FONT_LARGE);
+                printf("\r\nDouble press!");
+                delay_1ms(1000);
+                pi_lcd_fill_rectangle(64, 104, 256, 136, MOCHA_BASE);
+                pi_led_set(PI_LED_OFF);
+                break;
+            case PI_BUTTON_LONG_PRESS:
+                pi_led_set(PI_LED_BLUE);
+                pi_lcd_print_string(64, 104, "Long   Press", MOCHA_BLUE, MOCHA_SURFACE0, FONT_LARGE);
+                printf("\r\nLong press!");
+                delay_1ms(1000);
+                pi_lcd_fill_rectangle(64, 104, 256, 136, MOCHA_BASE);
+                pi_led_set(PI_LED_OFF);
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -30,6 +30,8 @@
 #include "gd32f30x.h"
 #include "systick.h"
 
+#include "pi_lcd_font.h"
+
 void pi_lcd_init(void);
 void pi_lcd_gpio_init(void);
 void pi_lcd_set_init(void);
@@ -46,6 +48,8 @@ void pi_lcd_draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16
 void pi_lcd_draw_rectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color);
 void pi_lcd_draw_circle(uint16_t x, uint16_t y, uint16_t r, uint16_t color);
 
+void pi_lcd_print_char(uint16_t x, uint16_t y, uint8_t c, uint16_t text_color, uint16_t back_color, uint8_t font_size);
+void pi_lcd_print_string(uint16_t x, uint16_t y, const uint8_t *s, uint16_t text_color, uint16_t back_color, uint8_t font_size);
 
 // Catppuccin Mocha - 16-bit (RGB565) Color Palette for TFT screens
 
@@ -75,5 +79,10 @@ void pi_lcd_draw_circle(uint16_t x, uint16_t y, uint16_t r, uint16_t color);
 #define MOCHA_BASE      0x18E5 // Original: 0x1e1e2e
 #define MOCHA_MANTLE    0x18C4 // Original: 0x181825
 #define MOCHA_CRUST     0x1083 // Original: 0x11111b
+
+#define FONT_MINI   12
+#define FONT_SMALL  16
+#define FONT_MEDIUM 24
+#define FONT_LARGE  32
 
 #endif //PI_LCD_H

@@ -196,7 +196,7 @@ void pi_lcd_draw_point(const uint16_t x, const uint16_t y, const uint16_t color)
     pi_lcd_write_data_16(color);
 }
 
-void pi_lcd_draw_line(const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2, uint16_t color) {
+void pi_lcd_draw_line(const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2, const uint16_t color) {
     uint16_t x_delta = x2 - x1, y_delta = y2 - y1;
     uint16_t x_step, y_step;
     uint16_t x_error = 0, y_error = 0;
@@ -244,15 +244,15 @@ void pi_lcd_draw_line(const uint16_t x1, const uint16_t y1, const uint16_t x2, c
     }
 }
 
-void pi_lcd_draw_rectangle(const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2, uint16_t color) {
+void pi_lcd_draw_rectangle(const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2, const uint16_t color) {
     pi_lcd_draw_line(x1, y1, x1, y2, color);
     pi_lcd_draw_line(x1, y2, x2, y2, color);
     pi_lcd_draw_line(x2, y2, x2, y1, color);
     pi_lcd_draw_line(x2, y1, x1, y1, color);
 }
 
-void pi_lcd_draw_circle(const uint16_t x, const uint16_t y, const uint16_t radius, uint16_t color) {
-    uint16_t dx = 0, dy = radius;
+void pi_lcd_draw_circle(const uint16_t x, const uint16_t y, const uint16_t r, const uint16_t color) {
+    uint16_t dx = 0, dy = r;
     while (dx <= dy) {
         pi_lcd_draw_point(x + dx, y + dy, color);
         pi_lcd_draw_point(x + dx, y - dy, color);
@@ -263,8 +263,75 @@ void pi_lcd_draw_circle(const uint16_t x, const uint16_t y, const uint16_t radiu
         pi_lcd_draw_point(x - dy, y + dx, color);
         pi_lcd_draw_point(x - dy, y - dx, color);
         dx++;
-        if (dx * dx + dy * dy >= radius * radius) {
+        if (dx * dx + dy * dy >= r * r) {
             dy--;
         }
+    }
+}
+
+void pi_lcd_print_char(const uint16_t x, const uint16_t y, uint8_t c, const uint16_t text_color, const uint16_t back_color, const uint8_t font_size) {
+    uint8_t map_len, map_byte, x_size, y_size, dx = 0;
+    c = c - ' ';
+    switch (font_size) {
+        case FONT_MINI:
+            map_len = 11;
+            x_size = 6;
+            y_size = 12;
+            break;
+        case FONT_SMALL:
+            map_len = 15;
+            x_size = 8;
+            y_size = 16;
+            break;
+        case FONT_MEDIUM:
+            map_len = 47;
+            x_size = 12;
+            y_size = 24;
+            break;
+        default:
+            map_len = 63;
+            x_size = 16;
+            y_size = 32;
+            break;
+    }
+
+    pi_lcd_write_area(x, y, x + x_size - 1, y + y_size - 1);
+
+    for (uint8_t map_index = 0; map_index <= map_len; map_index++) {
+        switch (font_size) {
+            case FONT_MINI:
+                map_byte = lcd_font_1206[c][map_index];
+                break;
+            case FONT_SMALL:
+                map_byte = lcd_font_1608[c][map_index];
+                break;
+            case FONT_MEDIUM:
+                map_byte = lcd_font_2412[c][map_index];
+                break;
+            default:
+                map_byte = lcd_font_3216[c][map_index];
+                break;
+        }
+
+        for (uint8_t map_loc = 0; map_loc < 8; map_loc++) {
+            if (map_byte & (0x1 << map_loc)) {
+                pi_lcd_write_data_16(text_color);
+            } else {
+                pi_lcd_write_data_16(back_color);
+            }
+            dx++;
+            if (dx % x_size == 0) {
+                dx = 0;
+                break;
+            }
+        }
+    }
+}
+
+void pi_lcd_print_string(uint16_t x, const uint16_t y, const uint8_t *s, const uint16_t text_color, const uint16_t back_color, const uint8_t font_size) {
+    while (*s != '\0') {
+        pi_lcd_print_char(x, y, *s, text_color, back_color, font_size);
+        x += (font_size >> 1);
+        s++;
     }
 }
