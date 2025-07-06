@@ -178,7 +178,11 @@ void pi_lcd_write_area(const uint16_t x1, const uint16_t y1, const uint16_t x2, 
     pi_lcd_write_reg(0x2c);
 }
 
-void pi_lcd_fill_area(const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2, const uint16_t color) {
+void pi_lcd_fill(const uint16_t color) {
+    pi_lcd_fill_rectangle(0, 0, PI_LCD_WIDTH, PI_LCD_HEIGHT, color);
+}
+
+void pi_lcd_fill_rectangle(const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2, const uint16_t color) {
     pi_lcd_write_area(x1, y1, x2-1, y2-1);
     for (uint16_t x = x1; x < x2; x++) {
         for (uint16_t y = y1; y < y2; y++) {
@@ -199,22 +203,22 @@ void pi_lcd_draw_line(const uint16_t x1, const uint16_t y1, const uint16_t x2, c
     uint16_t x_ptr = x1, y_ptr = y1;
     uint16_t length;
 
-    if (x_delta > 0) {
-        x_step = 1;
+    if (x_delta & 0x8000) {
+        x_step = -1;
+        x_delta = -x_delta;
     } else if (x_delta == 0) {
         x_step = 0;
     } else {
-        x_step = -1;
-        x_delta = -x_delta;
+        x_step = 1;
     }
 
-    if (y_delta > 0) {
-        y_step = 1;
+    if (y_delta & 0x8000) {
+        y_step = -1;
+        y_delta = -y_delta;
     } else if (y_delta == 0) {
         y_step = 0;
     } else {
-        y_step = -1;
-        y_delta = -y_delta;
+        y_step = 1;
     }
 
     if (x_delta > y_delta) {
@@ -240,7 +244,7 @@ void pi_lcd_draw_line(const uint16_t x1, const uint16_t y1, const uint16_t x2, c
     }
 }
 
-void pi_lcd_draw_rect(const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2, uint16_t color) {
+void pi_lcd_draw_rectangle(const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2, uint16_t color) {
     pi_lcd_draw_line(x1, y1, x1, y2, color);
     pi_lcd_draw_line(x1, y2, x2, y2, color);
     pi_lcd_draw_line(x2, y2, x2, y1, color);
@@ -254,10 +258,10 @@ void pi_lcd_draw_circle(const uint16_t x, const uint16_t y, const uint16_t radiu
         pi_lcd_draw_point(x + dx, y - dy, color);
         pi_lcd_draw_point(x - dx, y + dy, color);
         pi_lcd_draw_point(x - dx, y - dy, color);
-        pi_lcd_draw_point(x + dy, y + dy, color);
-        pi_lcd_draw_point(x + dy, y - dy, color);
-        pi_lcd_draw_point(x - dy, y + dy, color);
-        pi_lcd_draw_point(x - dy, y - dy, color);
+        pi_lcd_draw_point(x + dy, y + dx, color);
+        pi_lcd_draw_point(x + dy, y - dx, color);
+        pi_lcd_draw_point(x - dy, y + dx, color);
+        pi_lcd_draw_point(x - dy, y - dx, color);
         dx++;
         if (dx * dx + dy * dy >= radius * radius) {
             dy--;

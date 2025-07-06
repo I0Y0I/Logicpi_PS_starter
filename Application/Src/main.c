@@ -72,11 +72,15 @@ int main(void)
 
     PI_LCD_BLK_RESET();
     pi_lcd_init();
-    pi_lcd_fill_area(0, 0, 320, 240, MOCHA_BASE);
+    pi_lcd_fill(MOCHA_CRUST);
+    pi_lcd_fill_rectangle(0, 0, PI_LCD_WIDTH>>1, PI_LCD_HEIGHT>>1, MOCHA_SURFACE0);
+    pi_lcd_draw_line(80, 0, 80, 120, MOCHA_BLUE);
+    pi_lcd_draw_rectangle(20, 20, 140, 100, MOCHA_ROSEWATER);
+    pi_lcd_draw_circle(80, 60, 10, MOCHA_PINK);
     PI_LCD_BLK_SET();
 
     while (1){
-        pi_lcd_draw_line(100, 100, 200, 100, MOCHA_TEAL);
+        // pi_lcd_draw_line(100, 100, 200, 100, MOCHA_TEAL);
         // switch (pi_button_get_event()) {
         //     case PI_BUTTON_SINGLE_PRESS:
         //         pi_led_set(PI_LED_RED);
