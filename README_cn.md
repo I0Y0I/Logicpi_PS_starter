@@ -13,6 +13,7 @@
   - `BSP/`: 板级支持包。用于特定于开发板的外设驱动，如 LED、按键和 USART。
   - `CMSIS/`: ARM Cortex-M4 内核支持文件。
   - `GD32F30x_standard_peripheral/`: GigaDevice 的 GD32F30x 系列标准外设驱动。
+  - `PicoKit/`: 一个小而强大的抽象驱动库。
 - `Project/`: 项目特定文件。
   - `gd32f303cbt6.lds`: 目标 MCU 的链接器脚本。
   - `gd32f303cbt6.cfg`: 用于烧录和调试的 OpenOCD 配置文件。

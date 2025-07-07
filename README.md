@@ -15,6 +15,7 @@ This project provides a basic firmware structure for the GD32F303CBT6, including
   - `BSP/`: Board Support Package. Drivers for board-specific peripherals like LEDs, buttons, and USART.
   - `CMSIS/`: ARM Cortex-M4 core support files.
   - `GD32F30x_standard_peripheral/`: GigaDevice's standard peripheral drivers for the GD32F30x series.
+  - `PicoKit/`: A small but powerful abstract driver library.
 - `Project/`: Project-specific files.
   - `gd32f303cbt6.lds`: Linker script for the target MCU.
   - `gd32f303cbt6.cfg`: OpenOCD configuration for flashing and debugging.
