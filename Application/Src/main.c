@@ -81,7 +81,7 @@ int main(void)
 
     while (1){
         switch (pi_button_get_event()) {
-            case PI_BUTTON_SINGLE_PRESS:
+            case BUTTON_SINGLE_PRESS:
                 pi_led_set(PI_LED_RED);
                 pi_lcd_print_string(64, 104, "Short  Press", MOCHA_RED, MOCHA_SURFACE0, FONT_LARGE);
                 printf("\r\nShort press!");
@@ -89,7 +89,7 @@ int main(void)
                 pi_lcd_fill_rectangle(64, 104, 256, 136, MOCHA_BASE);
                 pi_led_set(PI_LED_OFF);
                 break;
-            case PI_BUTTON_DOUBLE_PRESS:
+            case BUTTON_DOUBLE_PRESS:
                 pi_led_set(PI_LED_GREEN);
                 pi_lcd_print_string(64, 104, "Double Press", MOCHA_GREEN, MOCHA_SURFACE0, FONT_LARGE);
                 printf("\r\nDouble press!");
@@ -97,7 +97,7 @@ int main(void)
                 pi_lcd_fill_rectangle(64, 104, 256, 136, MOCHA_BASE);
                 pi_led_set(PI_LED_OFF);
                 break;
-            case PI_BUTTON_LONG_PRESS:
+            case BUTTON_LONG_PRESS:
                 pi_led_set(PI_LED_BLUE);
                 pi_lcd_print_string(64, 104, "Long   Press", MOCHA_BLUE, MOCHA_SURFACE0, FONT_LARGE);
                 printf("\r\nLong press!");
