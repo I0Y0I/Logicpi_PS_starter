@@ -1,60 +1,111 @@
+/**
+ * @file button.c
+ * @brief Implements the button driver with support for single, double, and long press events.
+ */
+
 #include "button.h"
 
-void button_init(struct button_struct *b) {
+// --- Private Function Prototypes ---
+
+/**
+ * @brief Checks if the button is currently being pressed.
+ *
+ * This function reads the button's GPIO pin and compares it to the configured
+ * active level (`valid` field in the button_struct).
+ *
+ * @param b Pointer to the button_struct instance.
+ * @return `true` if the button is pressed, `false` otherwise.
+ */
+static bool is_pressed(const button_struct *b);
+
+// --- Public Function Implementations ---
+
+/**
+ * @brief Initializes a button instance.
+ */
+void button_init(button_struct *b) {
+    // Enable the clock for the GPIO peripheral.
     rcu_periph_clock_enable(b->rcu);
+    // Configure the GPIO pin as a floating input.
     gpio_init(b->gpio, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, b->pin);
-    b->status = gpio_input_bit_get(b->gpio, b->pin);
+    // Initialize the button state.
+    b->state = BUTTON_STATE_IDLE;
     b->update_time = get_time_tick();
 }
 
-enum BUTTON_EVENT get_button_event(struct button_struct *b) {
+/**
+ * @brief Polls the button to get the latest event.
+ */
+BUTTON_EVENT get_button_event(button_struct *b) {
     const uint32_t now_time = get_time_tick();
-    enum BUTTON_EVENT event = BUTTON_IDLE;
+    BUTTON_EVENT event = BUTTON_EVENT_IDLE;
 
-    // 消抖，状态改变后等待一段时间再检测下一次改变。
-    if (now_time - b->update_time > BUTTON_DEBOUNCING_MILLIS) {
-        if (b->status != gpio_input_bit_get(b->gpio, b->pin)) {
-            b->status = !b->status;
+    // --- Debouncing ---
+    // Ignore rapid changes to prevent noise from being detected as a press.
+    if (now_time - b->update_time <= BUTTON_DEBOUNCING_MILLIS) {
+        return event;
+    }
+
+    // --- State Machine ---
+    switch (b->state) {
+        case BUTTON_STATE_IDLE:
+            // If the button is pressed, transition to the wait-for-long-press state.
+            if (is_pressed(b)) {
+                b->state = BUTTON_STATE_WAIT_LONG;
+                b->update_time = now_time;
+            }
+            break;
+
+        case BUTTON_STATE_WAIT_LONG:
+            if (!is_pressed(b)) {
+                // Button was released before the long-press threshold.
+                // Transition to wait-for-double-press state.
+                b->state = BUTTON_STATE_WAIT_DOUBLE;
+                b->update_time = now_time;
+            } else if (now_time - b->update_time > BUTTON_LONG_PRESS_THRESHOLD) {
+                // Button has been held long enough for a long press.
+                b->state = BUTTON_STATE_LONG;
+                event = BUTTON_EVENT_LONG_PRESS;
+            }
+            break;
+
+        case BUTTON_STATE_WAIT_DOUBLE:
+            if (is_pressed(b)) {
+                // A second press was detected within the double-press threshold.
+                b->state = BUTTON_STATE_DOUBLE;
+                b->update_time = now_time;
+                event = BUTTON_EVENT_DOUBLE_PRESS;
+            } else if (now_time - b->update_time > BUTTON_DOUBLE_PRESS_THRESHOLD) {
+                // No second press was detected in time, so it's a single press.
+                b->state = BUTTON_STATE_IDLE;
+                event = BUTTON_EVENT_SINGLE_PRESS;
+            }
+            break;
+
+        case BUTTON_STATE_LONG:
+        case BUTTON_STATE_DOUBLE:
+            // For both long and double press states, wait for the button to be released.
+            if (!is_pressed(b)) {
+                b->state = BUTTON_STATE_IDLE;
+                b->update_time = now_time;
+            }
+            break;
+
+        default:
+            // If the state is somehow invalid, reset to idle to be safe.
+            b->state = BUTTON_STATE_IDLE;
             b->update_time = now_time;
-        }
-    }
-
-    // 当按键状态发生改变时，更新按键状态并记录改变发生的时间。
-    if (b->is_pressed != (b->status == b->valid)) {
-        b->is_pressed = !b->is_pressed;
-        if (b->is_pressed) {
-            b->pressed_time = now_time;
-        }
-        else {
-            b->released_time = now_time;
-
-            // 释放按键时，如果为长按，则已经触发过了按键事件，只需要清空标志位。
-            if (b->is_long_pressed) {
-                b->is_long_pressed = false;
-            }
-            // 如果前面已记录一次按下，触发双击事件，并清空标志位，长按优先于双击。
-            else if (b->wait_for_double_press) {
-                event = BUTTON_DOUBLE_PRESS;
-                b->wait_for_double_press = false;
-            }
-            // 如果是首次按下，记录这次按下，等待双击，不进行事件触发。
-            else {
-                b->wait_for_double_press = true;
-            }
-        }
-    }
-
-    // 如果上次按键按下后等待一段时间仍未检测到双击，触发单击事件，清空标志位。
-    if (!b->is_pressed && b->wait_for_double_press && now_time - b->released_time > BUTTON_DOUBLE_PRESS_GAP_MILLIS) {
-        event = BUTTON_SINGLE_PRESS;
-        b->wait_for_double_press = false;
-    }
-
-    // 已按下了足够长的时间，触发长按事件。
-    if (!b->is_long_pressed && b->is_pressed && now_time - b->pressed_time > BUTTON_LONG_PRESS_HOLD_MILLIS) {
-        event = BUTTON_LONG_PRESS;
-        b->is_long_pressed = true;
+            break;
     }
 
     return event;
+}
+
+// --- Private Function Implementations ---
+
+/**
+ * @brief Checks if the button is currently being pressed.
+ */
+static bool is_pressed(const button_struct *b) {
+    return gpio_input_bit_get(b->gpio, b->pin) == b->valid;
 }

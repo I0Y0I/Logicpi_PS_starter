@@ -16,6 +16,6 @@
 #define BUTTON_LONG_PRESS_HOLD_MILLIS 800
 
 void pi_button_init(void);
-enum BUTTON_EVENT pi_button_get_event(void);
+BUTTON_EVENT pi_button_get_event(void);
 
 #endif //PI_BUTTON_H
